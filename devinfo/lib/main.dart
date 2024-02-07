@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-
 import 'deviceinfo1.dart';
 
-void main()=>runApp(const MyApp());
-
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,41 +31,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static final DeviceInfoPlugin deviceInfoPlugin =DeviceInfoPlugin();
-  Map<String,dynamic>_deviceData=<String,dynamic>{};
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  Map<String, dynamic> _deviceData = <String, dynamic>{};
   // late String androidDeviceInfo;
 
-
   @override
-  void initState(){
+  void initState() {
     initPlatformState();
     super.initState();
     // fetchDeviceDetails();
-    }
+  }
 
-      FutureOr<void>initPlatformState()async{
-      var deviceData =<String,dynamic>{};
+  FutureOr<void> initPlatformState() async {
+    var deviceData = <String, dynamic>{};
 
-      try{
-        if(Platform.isAndroid){
-        deviceData= _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        }else if(Platform.isIOS){
-          deviceData= _readIosBuildData(await deviceInfoPlugin.iosInfo);
-        }
-      } on PlatformException{
-        deviceData=<String,dynamic>{'Error':'Faild to get platform version'};
+    try {
+      if (Platform.isAndroid) {
+        deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
+      } else if (Platform.isIOS) {
+        deviceData = _readIosBuildData(await deviceInfoPlugin.iosInfo);
       }
-
-      if(!mounted)return;
-
-      setState(() {
-        _deviceData=deviceData;
-      });
-
+    } on PlatformException {
+      deviceData = <String, dynamic>{'Error': 'Faild to get platform version'};
     }
 
+    if (!mounted) return;
 
-    Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
+    setState(() {
+      _deviceData = deviceData;
+    });
+  }
+
+  Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
     return <String, dynamic>{
       'version.securityPatch': build.version.securityPatch,
       'version.sdkInt': build.version.sdkInt,
@@ -107,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     };
   }
 
-    Map<String, dynamic> _readIosBuildData(IosDeviceInfo data) {
+  Map<String, dynamic> _readIosBuildData(IosDeviceInfo data) {
     return <String, dynamic>{
       'name': data.name,
       'systemName': data.systemName,
@@ -123,33 +118,31 @@ class _MyHomePageState extends State<MyHomePage> {
       'utsname.machine:': data.utsname.machine,
     };
   }
-    
-    @override
-    Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Device Info '),
-              centerTitle: true,
-              bottom: const TabBar(tabs: [
-                Tab(
-                  text: 'Android',
-                ),
-                Tab(
-                  text: 'Internal',
-                ),
-              ]),
+      length: 2,
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Device Info '),
+            centerTitle: true,
+            bottom: const TabBar(tabs: [
+              Tab(
+                text: 'Android',
+              ),
+              Tab(
+                text: 'Internal',
+              ),
+            ]),
+          ),
+          body: TabBarView(children: [
+            DeviceInfo(
+              deviceInfoPlugin: _deviceData['androidDeviceInfo'],
+              deviceInfo: '',
             ),
-            body:TabBarView(
-              children:[
-                DeviceInfo(deviceInfoPlugin: _deviceData['androidDeviceInfo'], deviceInfo: '',),
-                // DeviceInfo(deviceInfoPlugin: _deviceData['IosDeviceInfo']),
-              ]
-              
-            )
-            ),
-            );
-            
+            // DeviceInfo(deviceInfoPlugin: _deviceData['IosDeviceInfo']),
+          ])),
+    );
   }
-  }
+}
