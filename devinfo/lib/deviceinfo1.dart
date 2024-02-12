@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class DeviceInfo extends StatelessWidget {
   final String deviceInfo;
   const DeviceInfo(
-      {Key? key, required this.deviceInfo, required deviceInfoPlugin})
-      : super(key: key);
+      {super.key, required this.deviceInfo, required deviceInfoPlugin});
 
   @override
   Widget build(BuildContext context) {
